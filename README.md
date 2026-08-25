@@ -396,7 +396,7 @@ python scripts/get_vendor_summary.py
 
 <h2><a class="anchor" id="author--contact"></a>Author & Contact</h2>
 
-           **Ansh Bodele**Data Analyst
-           Email: anshbodele517@gmail.com
-           [LinkedIn](https://www.linkedin.com/in/ansh-bodele-897b5a31a/)
-           [Portfolio](https://github.com/anshbodele?tab=repositories)
+**Ansh Bodele**Data Analyst
+Email: anshbodele517@gmail.com
+[LinkedIn](https://www.linkedin.com/in/ansh-bodele-897b5a31a/)
+[Portfolio](https://github.com/anshbodele?tab=repositories)
