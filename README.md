@@ -213,6 +213,7 @@ Average delay will change if different visual filters will be applied.
 4.2) 30.94 % customers have travel type 'Personal'.
 
         thus, more customers have travel type 'Business'.
+![Vendor Performance Dashboard](<img width="1155" height="742" alt="Image" src="https://github.com/user-attachments/assets/8be78a99-44fc-4983-b00a-3846ac210eef" />)
 
 
 
