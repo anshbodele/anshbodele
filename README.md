@@ -386,11 +386,13 @@ python scripts/get_vendor_summary.py
    - `dashboard/vendor_performance_dashboard.pbix`
 
 <h2><a class="anchor" id="final-recommendations"></a>Final Recommendations</h2>
- - Diversify vendor base to reduce risk
- - Optimize bulk order strategies
- - Reprice slow-moving, high-margin brands
- - Clear unsold inventory strategically
- - Improve marketing for underperforming vendors
+
+  - Optimize bulk order strategies
+  - Reprice slow-moving, high-margin brands
+  - Clear unsold inventory strategically
+  - Improve marketing for underperforming vendors
+  - Diversify vendor base to reduce risk
+
 
 <h2><a class="anchor" id="author--contact"></a>Author & Contact</h2>
 
