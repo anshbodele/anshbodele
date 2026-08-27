@@ -289,18 +289,20 @@ Lenders need to identify high-risk borrowers and monitor portfolio health. This 
 ---
 
 <h2><a class="anchor" id="tools-technologies"></a>Tools & Technologies</h2>
-| Layer | Tool |
+
+| Component | Technology / Tool |
 | :--- | :--- |
-| Storage | Microsoft SQL Server |
-| Integration | Power BI Dataflow (Gen1) + Standard Gateway |
-| Transformation | Power Query (M) |
-| Modeling | DAX |
-| Visualization | Power BI Desktop / Service |
-| Automation | Scheduled Refresh |
+| **Storage** | Microsoft SQL Server |
+| **Integration** | Power BI Dataflow (Gen1) + Standard Gateway |
+| **Transformation** | Power Query (M) |
+| **Modeling** | DAX |
+| **Visualization** | Power BI Desktop / Service |
+| **Automation** | Scheduled Refresh |
 
 ---
 
 <h2><a class="anchor" id="project-architecture"></a>Project Architecture</h2>
+
 1. **SQL Server** – Raw data.
 2. **Standard Gateway** – Secure connection from on-prem SQL to cloud.
 3. **Dataflow (Gen1)** – Ingests SQL tables into Power BI cloud storage.
