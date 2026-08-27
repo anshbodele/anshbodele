@@ -241,6 +241,8 @@ Here are some ideas to get you started:
 
 
 
+
+
 # 📊 Loan Default Risk Analysis – Power BI Dashboard
 
 ---
@@ -275,15 +277,12 @@ Lenders need to identify high-risk borrowers and monitor portfolio health. This 
 ---
 
 <h2><a class="anchor" id="dataset-description"></a>Dataset Description</h2>
-
 | Attribute | Detail |
 | :--- | :--- |
 | **Source** | On-premise SQL Server |
 | **Records** | 10,000+ (scaled in production) |
 | **Target** | `Default` (0 = Repaid, 1 = Defaulted) |
-| **Key Columns** | `Age`, `Income`, `LoanAmount`, `CreditScore`, `EmploymentType`, `DTIRatio`, `LoanPurpose`, `HasCoSigner`, `Loan Date` |
-
-
+| **Key Columns** | • `Age` · `Income` · `LoanAmount` · `CreditScore` <br/> • `EmploymentType` · `DTIRatio` · `LoanPurpose` <br/> • `HasCoSigner` · `Loan Date` |
 > Full column definitions are available in `Column_Definitions.xlsx`.
 
 ---
@@ -298,7 +297,6 @@ Lenders need to identify high-risk borrowers and monitor portfolio health. This 
 | **Modeling** | DAX |
 | **Visualization** | Power BI Desktop / Service |
 | **Automation** | Scheduled Refresh |
-
 ---
 
 <h2><a class="anchor" id="project-architecture"></a>Project Architecture</h2>
@@ -372,6 +370,7 @@ The report is structured into three focused analytical pages
 
 <img width="1298" height="727" alt="Image" src="https://github.com/user-attachments/assets/00c52656-d7b1-4d45-95d0-f464db7af3bc" />
 
+---
 
 2. **Page 2: Applicant Demographics & Financial Profile**:
    - **Visuals:** Median Loan by Credit Score, Average Loan Amount (High Credit) cross-tab with Age/Marital Status, Total Loans by Credit Bins (Adults), Loan segmentation by Mortgage/Dependents, Loan counts by Education.
@@ -379,6 +378,7 @@ The report is structured into three focused analytical pages
 
 <img width="1292" height="730" alt="Image" src="https://github.com/user-attachments/assets/2590f9f6-0510-4033-b713-634d19f5e6b3" />
 
+---
 
 3. **Page 3: Financial Risk Matrix**:
    - **Visuals:** YOY Loan Amount Change, YOY Default Change, YTD Loan Amount by Credit Score/Marital Status, Income Brackets.
@@ -423,3 +423,4 @@ The report is structured into three focused analytical pages
   - Email: anshbodele517@gmail.com
   - [LinkedIn](https://www.linkedin.com/in/ansh-bodele-897b5a31a/)
   - [Portfolio](https://github.com/anshbodele?tab=repositories)
+
