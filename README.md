@@ -275,12 +275,14 @@ Lenders need to identify high-risk borrowers and monitor portfolio health. This 
 ---
 
 <h2><a class="anchor" id="dataset-description"></a>Dataset Description</h2>
+
 | Attribute | Detail |
 | :--- | :--- |
 | **Source** | On-premise SQL Server |
 | **Records** | 10,000+ (scaled in production) |
 | **Target** | `Default` (0 = Repaid, 1 = Defaulted) |
-| **Key Columns** | • `Age` · `Income` · `LoanAmount` · `CreditScore` <br/> • `EmploymentType` · `DTIRatio` · `LoanPurpose` <br/> • `HasCoSigner` · `Loan Date` |
+| **Key Columns** | `Age`, `Income`, `LoanAmount`, `CreditScore`, `EmploymentType`, `DTIRatio`, `LoanPurpose`, `HasCoSigner`, `Loan Date` |
+
 
 > Full column definitions are available in `Column_Definitions.xlsx`.
 
