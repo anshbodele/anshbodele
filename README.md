@@ -115,7 +115,7 @@ ON
     a.`Product ID` = b.`Product ID`;
 ```
 
-## ✅ Feature Engineering (Calculated Column) in Power BI
+### ✅ Feature Engineering (Calculated Column) in Power BI
 
 Once the data was loaded, a crucial calculated column was created to translate unit differences into monetary impact:
 
@@ -123,7 +123,7 @@ Once the data was loaded, a crucial calculated column was created to translate u
 Profit/Loss = (availability - demand) * unit_price
 ```
 
-## ✅ Data Modeling & Key DAX Measures
+### ✅ Data Modeling & Key DAX Measures
 
 All measures are optimized for correct filter context. Below are the core DAX formulas implemented in the model.
 
