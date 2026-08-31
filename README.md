@@ -1,6 +1,6 @@
 
 
-# 📊 Loan Default Risk Analysis – Power BI Dashboard
+#   Data Visualization for Business Optimization
 
 ---
 
@@ -9,7 +9,7 @@
 - <a href="#problem-statement">Problem Statement</a>
 - <a href="#dataset-description">Dataset Description</a>
 - <a href="#tools-technologies">Tools & Technologies</a>
-- <a href="#project-structure">Project Architecture</a>
+- <a href="#project-architecture">Project Architecture</a>
 - <a href="#data-preparation">Data Preparation</a>
 - <a href="#dashboard-pages">Dashboard Pages & Visuals</a>
 - <a href="#research-questions-key-findings">Research Questions & Key Findings</a>
@@ -19,29 +19,52 @@
 ---
 
 <h2><a class="anchor" id="overview"></a>Overview</h2>
-An end-to-end BI solution that analyzes loan default risk using a production-grade pipeline:  
-**SQL Server → Power BI Dataflow → Power BI Desktop → Power BI Service** with automated daily refresh.
+An end-to-end Business Intelligence solution designed to track inventory efficiency and its direct financial impact. This project translates raw daily supply/demand data into actionable insights through two interactive Power BI dashboards.
+
+The pipeline follows a production-grade workflow: **MySQL/PostgreSQL → Power Query → DAX → Power BI Dashboards**, with a seamless transition from a **Test Environment** to a **Production Environment** without redesigning the reports.
+
+**Key Results Snapshot:**
+- **Test Environment:** $97K Total Loss, $22K Total Profit, 579 Unit Shortages.
+- **Production Environment:** $8M Total Loss, $301K Total Profit, 61K Unit Shortages.
 
 ---
 
 <h2><a class="anchor" id="problem-statement"></a>Problem Statement</h2>
-Lenders need to identify high-risk borrowers and monitor portfolio health. This project answers:
+Businesses constantly face a critical trade-off between **overstocking** (which ties up capital and increases holding costs) and **understocking** (which causes lost sales and customer dissatisfaction). Without a unified view, stakeholders struggle to answer:
 
-- Which borrower segments (employment, age, credit score) default the most?
-- What factors influence loan amounts and repayment behavior?
-- How does portfolio risk evolve year-over-year?
+- How many units are we short on average per day?
+- What is the actual financial cost of these inventory shortages?
+- Where are we recovering losses through overstock sales?
+- How do these metrics scale from test datasets to live production data?
+
+This project solves this by creating a single source of truth that differentiates between **operational health (unit-based)** and **financial health (monetary-based)**.
 
 ---
 
 <h2><a class="anchor" id="dataset-description"></a>Dataset Description</h2>
+The analysis is built upon two core flat-file datasets, imported into a SQL environment for staging.
 
 | Attribute | Detail |
 | :--- | :--- |
-| **Source** | On-premise SQL Server |
-| **Records** | 10,000+ (scaled in production) |
-| **Target** | `Default` (0 = Repaid, 1 = Defaulted) |
-| **Key Columns** | • `Age` · `Income` · `LoanAmount` · `CreditScore` <br/> • `EmploymentType` · `DTIRatio` · `LoanPurpose` <br/> • `HasCoSigner` · `Loan Date` |
-> Full column definitions are available in `Column_Definitions.xlsx`.
+| **Source** | On-premise MySQL / PostgreSQL (Test & Prod) |
+| **Test Records** | ~100 rows (Inventory + 20 Products) |
+| **Production Records** | ~1,200+ rows (Scaled Inventory + 22 Products) |
+| **Target Metric** | Supply Shortage (`Demand` > `Availability`) |
+
+### 1. Inventory Dataset (`Test/Prod Environment`)
+| Column | Description |
+| :--- | :--- |
+| `Order Date (DD/MM/YYYY)` | Specific date of the inventory record. |
+| `Product ID` | Foreign key referencing the product table. |
+| `Availability` | Number of units physically available in stock. |
+| `Demand` | Number of units requested by customers. |
+
+### 2. Products Dataset (Dimension)
+| Column | Description |
+| :--- | :--- |
+| `Product ID` | Primary key (IDs 1 to 20 in Test, extended to 22 in Prod). |
+| `Product Name` | Descriptive name (e.g., *Wireless Mouse*, *4K Smart TV*). |
+| `Unit Price ($)` | The selling price per unit used for financial calculations. |
 
 ---
 
@@ -49,131 +72,204 @@ Lenders need to identify high-risk borrowers and monitor portfolio health. This 
 
 | Component | Technology / Tool |
 | :--- | :--- |
-| **Storage** | Microsoft SQL Server |
-| **Integration** | Power BI Dataflow (Gen1) + Standard Gateway |
-| **Transformation** | Power Query (M) |
-| **Modeling** | DAX |
-| **Visualization** | Power BI Desktop / Service |
-| **Automation** | Scheduled Refresh |
+| **Storage & Staging** | MySQL (Test), PostgreSQL / MySQL (Production) |
+| **Transformation** | SQL (Joins, Data Cleaning), Power Query (M) |
+| **Semantic Model** | DAX (Calculated Columns & Measures) |
+| **Visualization** | Microsoft Power BI Desktop / Service |
+| **Version Control** | Git & GitHub |
+| **Deployment** | Switched Data Source Settings (Test → Prod) seamlessly |
+
 ---
 
 <h2><a class="anchor" id="project-architecture"></a>Project Architecture</h2>
 
-1. **SQL Server** – Raw data.
-2. **Standard Gateway** – Secure connection from on-prem SQL to cloud.
-3. **Dataflow (Gen1)** – Ingests SQL tables into Power BI cloud storage.
-4. **Power BI Desktop** – Connects to Dataflow (Import Mode).
-5. **Power Query** – Data cleaning, type validation, feature creation.
-6. **DAX** – Calculated columns & measures for dynamic analysis.
-7. **Dashboard** – 3 interactive pages published to Service.
-8. **Scheduled Refresh** – Dataflow refreshes at 6:00 AM, Report at 6:30 AM.
+1. **Raw CSVs** – Uploaded to SQL Server (Test & Prod environments).
+2. **SQL Staging** – Data quality checks, type validations, and `LEFT JOIN` to combine Inventory with Products.
+3. **Power BI (Import Mode)** – Connected to SQL tables (Test first, then switched to Prod).
+4. **Power Query** – Data type validation, ensuring `Order_Date` is correctly parsed.
+5. **DAX** – Created calculated columns (`Profit/Loss`) and performance-tuned measures.
+6. **Dashboard** – Two interactive pages published (Operational & Financial).
+7. **Environment Switch** – Updated *Data Source Settings* to point from Test DB to Production DB, fully scaling the report.
 
 ---
 
 <h2><a class="anchor" id="data-preparation"></a>Data Preparation</h2>
 
-### ✅ Data Type Validation
-Set correct types: `LoanAmount` (Decimal), `CreditScore` (Whole Number), `Default` (Whole Number), categorical flags (Text).
+### ✅ SQL Staging (Test & Production)
+The raw CSV files were imported into the database. After rigorous data quality checks (checking for nulls, duplicates, and invalid dates), the following `LEFT JOIN` was executed to combine the fact table with the product dimension:
 
-### ✅ Feature Engineering (Calculated Columns)
+```sql
+CREATE TABLE new_table AS
+SELECT
+    a.`Order Date (DD/MM/YYYY)` AS Order_Date_DD_MM_YYYY,
+    a.`Product ID` AS product_id,
+    a.availability,
+    a.demand,
+    b.`Product Name` AS product_name,
+    b.`Unit Price ($)` AS unit_price
+FROM
+    prod.`prod+env+inventory+dataset` AS a
+LEFT JOIN
+    prod.`products` AS b
+ON
+    a.`Product ID` = b.`Product ID`;
+```
 
-#### Column
+## ✅ Feature Engineering (Calculated Column) in Power BI
 
-- **Age Groups**  
-  Teen (≤19) / Adults (20–39) / Middle Age Adults (40–59) / Senior Citizens (≥60)
+Once the data was loaded, a crucial calculated column was created to translate unit differences into monetary impact:
 
-- **Credit Score Bins**  
-  Very Low (≤400) / Low (401–450) / Medium (451–650) / High (>650)
+```dax
+Profit/Loss = (availability - demand) * unit_price
+```
 
-- **Year**  
-  Extracted from standardized date
+## ✅ Data Modeling & Key DAX Measures
 
-### ✅ Data Modeling & Key DAX Measures
+All measures are optimized for correct filter context. Below are the core DAX formulas implemented in the model.
 
-All measures are optimized for performance and correct filter context. Below are the final corrected DAX formulas implemented in the model.
+**Snapshot of some key DAX Measures**
 
-**Snap of some key DAX Measures**
-
-<img width="1052" height="143" alt="Image" src="https://github.com/user-attachments/assets/bd1a52a4-b8f1-4755-8d63-3a419fc80ec4" />
-
----
-
-<img width="1152" height="202" alt="Image" src="https://github.com/user-attachments/assets/ba2fa5f5-589a-435c-8013-5ed2fc5439a3" />
-
----
-
-<img width="465" height="72" alt="Image" src="https://github.com/user-attachments/assets/011b1f9b-b83f-4b59-bdf2-595c3558d06a" />
-
----
-
-<img width="1155" height="72" alt="Image" src="https://github.com/user-attachments/assets/e353e13e-d70f-45ea-8aed-b09f19dd8b21" />
-
----
-
-<img width="991" height="51" alt="Image" src="https://github.com/user-attachments/assets/25fd172a-7802-4646-bf4b-2acee3715107" />
+<img width="1156" height="50" alt="Image" src="https://github.com/user-attachments/assets/d22a7417-d86d-4f64-8031-7db9151217cf" />
 
 ---
 
-<img width="1148" height="182" alt="Image" src="https://github.com/user-attachments/assets/5e863530-be8b-48bb-959c-e7dc12b7ae7a" />
+<img width="1165" height="51" alt="Image" src="https://github.com/user-attachments/assets/fc9e1f62-0561-40b1-ba3f-271eeedc1326" />
 
 ---
-
-<img width="1157" height="183" alt="Image" src="https://github.com/user-attachments/assets/880ec390-4263-49b5-b1d7-bbc600a32992" />
-
-
----
-
 
 <h2><a class="anchor" id="dashboard-pages"></a>Dashboard Pages & Visuals</h2>
 
-The report is structured into three focused analytical pages
 
-1. **Page 1: Loan Default & Overview**:
-   - **Visuals:** Loan Amount by Purpose, Average Income by Employment Type, Default Rate by Employment Type, Average Loan by Age Group, Default Rate by Year.
-   - **Key Takeaway:** Overall default rate is steady at ~11.5%. Unemployed borrowers exhibit significantly higher risk.
+The report is structured into **two focused analytical pages**, designed to separate operational metrics from financial outcomes.
 
-<img width="1298" height="727" alt="Image" src="https://github.com/user-attachments/assets/00c52656-d7b1-4d45-95d0-f464db7af3bc" />
+### 1. 📦 Page 1: Operational Health (Unit Metrics)
+**This are production environment dashboards**
 
 ---
 
-2. **Page 2: Applicant Demographics & Financial Profile**:
-   - **Visuals:** Median Loan by Credit Score, Average Loan Amount (High Credit) cross-tab with Age/Marital Status, Total Loans by Credit Bins (Adults), Loan segmentation by Mortgage/Dependents, Loan counts by Education.
-   - **Key Takeaway:** Education distribution is nearly equal (~24k each). High-credit borrowers average ~$127K loans.
-
-<img width="1292" height="730" alt="Image" src="https://github.com/user-attachments/assets/2590f9f6-0510-4033-b713-634d19f5e6b3" />
+<img width="1321" height="786" alt="Image" src="https://github.com/user-attachments/assets/c8ac9c97-123f-46c0-8959-7dd58c8c7e29" />
 
 ---
 
-3. **Page 3: Financial Risk Matrix**:
-   - **Visuals:** YOY Loan Amount Change, YOY Default Change, YTD Loan Amount by Credit Score/Marital Status, Income Brackets.
-   - **Key Takeaway:** 2014 and 2017 saw negative loan growth (-1.5% and -1%), while 2018 rebounded strongly (+1.7%).
+**🔑 Key Takeaway:**
 
-<img width="1292" height="725" alt="Image" src="https://github.com/user-attachments/assets/992f8085-5718-4502-a573-2b3d92f4d980" />
+Across both environments, **Demand consistently exceeds Availability**. Production shows a significant gap, with:
 
+- **Average Demand:** 48.65 units/day
+- **Average Availability:** 24.70 units/day
+
+
+---
+
+### 2. 💰 Page 2: Financial Health (Monetary Metrics)
+
+---
+
+<img width="1321" height="786" alt="Image" src="https://github.com/user-attachments/assets/c8ac9c97-123f-46c0-8959-7dd58c8c7e29" />
+
+---
+**🔑 Key Takeaway:**
+
+In Production, **Total Loss ($8M) drastically outweighs Total Profit ($301K)**, indicating a profit-to-loss ratio of approximately **1:26**.
+
+
+---
+
+### 3. 🔄 Test vs. Production Scaling (Comparative Insight)
+
+The dashboard also provides a comparative view of how key operational metrics changed as the business scaled from **Test to Production**.
+
+**Key Metrics:**
+
+| Metric | Test | Production | Growth |
+|---|---:|---:|---:|
+| Average Daily Demand | 3.40 | 48.65 | **14.3×** |
+| Average Daily Availability | 2.87 | 24.70 | **8.6×** |
+
+---
+**Test Production Dashboards**
+
+---
+
+<img width="1321" height="795" alt="Image" src="https://github.com/user-attachments/assets/fc651ec3-fee8-4951-a43b-aae19b3e22a5" />
+
+--
+
+<img width="1327" height="797" alt="Image" src="https://github.com/user-attachments/assets/9c54a403-d59a-41db-ba88-e29ddf117131" />
+
+---
+
+**🔑 Key Takeaway:**
+
+As the business scaled from **Test to Production**, average daily demand increased by approximately **14×**, while availability increased by only **8.6×**.
+
+This imbalance resulted in a **worsening supply shortage gap**, highlighting the need for improved supply planning and inventory management as demand scales.
 
 ---
 
 <h2><a class="anchor" id="research-questions-key-findings"></a>Research Questions & Key Findings</h2>
 
-  - **Q1: Which employment type poses the highest default risk?**
-    Finding: Unemployed and Self-employed applicants default at significantly higher rates than Full-time employees. Financial instability is a primary risk driver.
-  - **Q2: Does a higher credit score correlate with larger loan amounts?**
-    Finding: Yes. Borrowers in the "High" credit score bracket take out larger average loans (~$128K) compared to "Very Low" scores ($124K), indicating lenders trust high-score individuals with more capital.
-  - **Q3: Are there cyclical yearly trends in lending?**
-    Finding: Year-over-year growth is volatile. 2014 and 2017 saw contractions, while 2015 and 2018 showed recovery. Default rates inversely mirror these growth patterns.
-  - **Q4: How do dependents and mortgages affect borrowing for middle-aged adults?**
-    Finding: Loan amounts are split almost evenly (50/50) between those with dependents/mortgages and those without, suggesting stable borrowing demand across both sub-groups.
+## 💡 Key Business Questions & Insights
 
+### Q1: How severe is the supply-demand gap in Production?
+
+**Finding:**  
+The gap is severe. Average daily demand (**48.65 units**) outpaces average daily availability (**24.70 units**) by nearly **24 units per day**, resulting in a cumulative shortage of approximately **61K units**.
+
+**💡 Insight:**  
+Supply chain velocity has not kept pace with customer demand growth, creating a significant and persistent supply shortage in the Production environment.
 
 ---
 
+### Q2: What is the financial cost of these shortages?
+
+**Finding:**  
+For every unit of shortage, the weighted average loss is approximately **$131**. Total Loss reached a staggering **$8 Million** in the Production dataset.
+
+**💡 Insight:**  
+High-value electronic products, such as **VR Headsets and 4K TVs**, being understocked drive a significant portion of the financial losses.
+
+---
+
+### Q3: Does overstocking compensate for the losses?
+
+**Finding:**  
+No. **Total Profit ($301K)** is substantially lower than **Total Loss ($8M)**, resulting in a detrimental **1:26 profit-to-loss ratio**.
+
+**💡 Insight:**  
+The profit generated from selling excess low-cost inventory cannot offset the revenue lost from failing to meet demand for high-value products.
+
+---
+
+### Q4: How reliable is the scaling from Test to Production?
+
+**Finding:**  
+The migration was seamless. By switching the data source connection in Power BI, the same measures and visualizations populated correctly with Production data.
+
+**💡 Insight:**  
+This demonstrates the robustness and scalability of the underlying **SQL queries and DAX logic**, allowing the analytical framework to transition from the Test environment to Production without requiring changes to the core calculations or dashboard design.
+
+---
 
 <h2><a class="anchor" id="final-recommendations"></a>Final Recommendations</h2>
 
-  - Tighten Criteria for Unemployed: Implement stricter validation (e.g., higher down payments, mandatory co-signers) for unemployed and self-employed applicants to mitigate elevated default risks.
-  - Attract High-Credit Borrowers: Since this segment takes larger loans and defaults less, develop premium loan products with competitive APRs to capture this profitable market.
-  - Monitor DTI Ratio Closely: Build an automated alert system for loan applications where DTIRatio exceeds 0.60, as this is a classic red flag for over-leverage.
-  - Align Marketing with YOY Trends: Increase marketing spend during historically positive growth years (e.g., 2018) and tighten underwriting during contraction years (e.g., 2017).
+
+Based on the analysis, I recommend the following business actions:
+
+1. **Prioritize High-Value Products:**  
+   Investigate stock levels for products with the highest unit prices, such as **4K Smart TV and VR Headset**. These products contribute significantly to the **$8M loss**, so securing their supply should be a top priority.
+
+2. **Implement Dynamic Replenishment:**  
+   Move from static safety stock levels to dynamic inventory buffers. With average Production demand of around **48 units/day**, consider setting replenishment triggers when stock falls below **50 units**.
+
+3. **Automate Alerts:**  
+   Set up Power BI Data Alerts when **Total Supply Shortage** crosses a critical threshold, such as **1,000 units in a single day**, to support timely procurement decisions.
+
+4. **Strengthen Data Governance:**  
+   Maintain a proper master product list in the Production SQL database containing all active Product IDs, including new additions such as **21 and 22**, to prevent NULL price errors in future imports.
+
+5. **Re-evaluate Overstock Strategy:**  
+   Analyze why low-cost products are consistently overstocked. If these products are contributing to the **$301K profit**, consider reducing bulk orders to free up warehouse space and capital for high-demand products.
 
 
 ---
