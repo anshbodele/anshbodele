@@ -165,7 +165,7 @@ Across both environments, **Demand consistently exceeds Availability**. Producti
 
 ---
 
-<img width="1321" height="786" alt="Image" src="https://github.com/user-attachments/assets/c8ac9c97-123f-46c0-8959-7dd58c8c7e29" />
+<img width="1321" height="793" alt="Image" src="https://github.com/user-attachments/assets/99b381a8-bdfa-4e5d-94a9-092bfefb2321" />
 
 ---
 **🔑 Key Takeaway:**
@@ -209,7 +209,6 @@ This imbalance resulted in a **worsening supply shortage gap**, highlighting the
 
 <h2><a class="anchor" id="research-questions-key-findings"></a>Research Questions & Key Findings</h2>
 
-## 💡 Key Business Questions & Insights
 
 ### Q1: How severe is the supply-demand gap in Production?
 
